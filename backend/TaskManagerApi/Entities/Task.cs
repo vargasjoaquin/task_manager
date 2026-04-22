@@ -16,7 +16,7 @@ namespace TaskManagerApi.Entities
         public int IdUsuario { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
         [ForeignKey("IdEstado")]
-        public virtual Task EstadoTarea { get; set; } = null!;
+        public virtual TaskStatus Estado { get; set; } = null!;
 
         [ForeignKey("IdUsuario")]
         public virtual User Usuario { get; set; } = null!;
