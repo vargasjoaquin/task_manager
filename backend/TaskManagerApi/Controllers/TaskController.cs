@@ -16,20 +16,20 @@ namespace TaskManagerApi.Controllers
             _taskService = taskService;
         }
 
-        // Endpoint: GET /api/tasks
+        // Endpoint: GET /api/tasks o /api/tasks?status=Pendiente
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> Get([FromQuery] string? status)
         {
-            var tasks = await _taskService.GetAllTasks();
-            return Ok(tasks);
-        }
-
-        // Endpoint: GET /api/tasks/status/{status}
-        [HttpGet("status/{status}")]
-        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetByStatus(string status)
-        {
-            var tasks = await _taskService.GetTasksByStatus(status);
-            return Ok(tasks);
+            if (string.IsNullOrEmpty(status))
+            {
+                var tasks = await _taskService.GetAllTasks();
+                return Ok(tasks);
+            }
+            else
+            {
+                var tasks = await _taskService.GetTasksByStatus(status);
+                return Ok(tasks);
+            }
         }
 
         // Endpoint: GET /api/tasks/{id}
@@ -38,7 +38,7 @@ namespace TaskManagerApi.Controllers
         {
             var task = await _taskService.GetTaskById(taskId);
 
-            if (task == null) 
+            if (task == null)
                 return NotFound($"La tarea con ID {taskId} no existe.");
 
             return Ok(task);
@@ -48,7 +48,7 @@ namespace TaskManagerApi.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskResponseDto>> Post([FromBody] TaskRequestDto taskDto)
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var result = await _taskService.CreateTask(taskDto);
@@ -59,15 +59,15 @@ namespace TaskManagerApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int taskId, [FromBody] TaskRequestDto taskDto)
         {
-            if (!ModelState.IsValid) 
-                return BadRequest(ModelState);
+            if (taskDto == null)
+                return BadRequest();
 
             var updated = await _taskService.UpdateTask(taskId, taskDto);
 
-            if (!updated) 
+            if (!updated)
                 return NotFound($"No se pudo actualizar. La tarea con ID {taskId} no existe.");
 
-            return NoContent(); 
+            return NoContent();
         }
 
         // Endpoint: DELETE /api/tasks/{id}
@@ -76,7 +76,7 @@ namespace TaskManagerApi.Controllers
         {
             var deleted = await _taskService.DeleteTask(taskId);
 
-            if (!deleted) 
+            if (!deleted)
                 return NotFound($"No se pudo eliminar. La tarea con ID {taskId} no existe.");
 
             return NoContent();
