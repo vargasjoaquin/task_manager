@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-//const TASK_API_URL = '';
+const TASK_API_URL = 'https://localhost:7273/api/tasks';
 
 export const useTasks = () => {
   const [taskList, setTaskList] = useState([]);
@@ -9,29 +9,29 @@ export const useTasks = () => {
 
   const tasksList = useCallback(async (statusName = "") => {
     setLoadingData(true);
-    setApiError(null);
-    
-    try 
-    {
+      setApiError(null);
+
+      try
+      {
       const statusQuery = statusName ? `?status=${statusName}` : "";
       const finalUrl = `${TASK_API_URL}${statusQuery}`;
       
-      const response = await fetch(finalUrl);
+          const response = await fetch(finalUrl);
 
-      if (!response.ok) 
-        throw new Error("No se pudo conectar a la API");
+          if (!response.ok)
+              throw new Error("No se pudo conectar a la API");
       
       const data = await response.json();
       setTaskList(data);
-    } 
-    catch (err) 
-    {
+      }
+      catch (err)
+      {
       setApiError(err.message);
-    } 
-    finally 
-    {
+      }
+      finally
+      {
       setLoadingData(false);
-    }
+      }
   }, []);
 
   const createTask = async (taskPayload) => {
@@ -42,41 +42,45 @@ export const useTasks = () => {
         body: JSON.stringify(taskPayload),
       });
 
-      if (response.ok) 
-        tasksList(); 
-    } 
-    catch (err) 
+        if (response.ok)
+            tasksList(); 
+    }
+    catch (err)
     {
-      console.error("Error al crear una tarea:", err);
+        console.error("Error al crear una tarea:", err);
     }
   };
 
   const updateTask = async (taskId, taskPayload) => {
     try{
-        const response = await fetch(`${TASK_API_URL}/${taskId}`, {
+      const response = await fetch(`${TASK_API_URL}/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(taskPayload),
       });
 
-      if (response.ok) 
-        tasksList();
+        if (response.ok)
+            tasksList();
     }
-    catch{
+    catch(err)
+    {
         console.error("Error al actualizar la tarea:", err);
     }
   };
 
   const deleteTask = async (taskId) => {
-    try {
-      const response = await fetch(`${TASK_API_URL}/${taskId}`, { method: 'DELETE' });
+      if (!window.confirm("¿Estás seguro de eliminar esta tarea?"))
+          return;
 
-      if (response.ok) 
-        tasksList();
-    } 
-    catch (err) 
+    try {
+        const response = await fetch(`${TASK_API_URL}/${taskId}`, { method: 'DELETE' });
+
+        if (response.ok)
+            tasksList();
+    }
+    catch (err)
     {
-      console.error("Error al borrar una tarea:", err);
+        console.error("Error al borrar una tarea:", err);
     }
   };
 
@@ -84,13 +88,13 @@ export const useTasks = () => {
     tasksList();
   }, [tasksList]);
 
-  return { 
-    taskList, 
-    loadingData, 
-    apiError, 
-    tasksList, 
-    createTask,
-    updateTask, 
-    deleteTask 
-  };
+    return {
+        taskList,
+        loadingData,
+        apiError,
+        tasksList,
+        createTask,
+        updateTask,
+        deleteTask
+    };
 };
