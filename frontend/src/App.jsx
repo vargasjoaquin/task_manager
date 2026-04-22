@@ -1,121 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState } from 'react';
+import { useTasks } from './hooks/useTasks';
+import { TaskForm } from './components/TaskForm';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { taskList, loadingData, apiError, tasksList, createTask, updateTask, deleteTask } = useTasks();
+  const [taskBeingEdited, setTaskBeingEdited] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("");
+
+  const handleFilterSelection = (statusName) => {
+    setActiveFilter(statusName);
+    tasksList(statusName);
+  };
+
+  const startEditing = (task) => {
+    setTaskBeingEdited(task);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="app-container">
+      <header><h1>Gestor de tareas</h1></header>
+      <main>
+        <TaskForm 
+          onTaskSubmit={createTask}
+          onTaskUpdate={(id, data) => { updateTask(id, data); setTaskBeingEdited(null); }}
+          taskToEdit={taskBeingEdited}
+          onCancelEdit={() => setTaskBeingEdited(null)}
+        />
+        <div className="list-header">
+          <h3>Mis Tareas</h3>
+          <div className="filter-buttons">
+            <button className={activeFilter === "" ? "active" : ""} onClick={() => handleFilterSelection("")}>Todas</button>
+            <button className={activeFilter === "Pendiente" ? "active" : ""} onClick={() => handleFilterSelection("Pendiente")}>Pendientes</button>
+            <button className={activeFilter === "En progreso" ? "active" : ""} onClick={() => handleFilterSelection("En progreso")}>En progreso</button>
+            <button className={activeFilter === "Completada" ? "active" : ""} onClick={() => handleFilterSelection("Completada")}>Completadas</button>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
+        {loadingData && <div className="status-message">⏳ Actualizando...</div>}
+        {apiError && <div className="error-box">⚠️ Error: {apiError}</div>}
+        <div className="task-grid">
+          {taskList.length == 0 && !loadingData && <p className="empty-msg">No hay tareas.</p>}
+          {taskList.map(task => (
+            <div key={task.id} className="task-item">
+              <div className="task-body">
+                {}
+                <span className={`badge ${task.estadoNombre ? task.estadoNombre.toLowerCase().replace(" ", "") : ""}`}>
+                  {task.estadoNombre}
+                </span>
+                <h4>{task.titulo}</h4>
+                <p>{task.descripcion}</p>
+                <small>Creado el: {new Date(task.fechaCreacion).toLocaleDateString()}</small>
+              </div>
+              <div className="task-footer">
+                <button className="edit-link" onClick={() => startEditing(task)}>Editar</button>
+                <button className="delete-link" onClick={() => deleteTask(parseInt(task.id))}>Eliminar</button>
+              </div>
+            </div>
+          ))}
         </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
