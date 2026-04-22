@@ -1,15 +1,13 @@
-﻿using TaskManagerApi.Entities;
-using myTask = TaskManagerApi.Entities.Task;
-
-namespace TaskManagerApi.Interfaces
+﻿namespace TaskManagerApi.Interfaces
 {
     public interface ITaskRepository
     {
-        Task<IEnumerable<myTask>> GetAllAsync(int? idEstado); 
-        Task<myTask?> GetByIdAsync(int id);
-        Task AddAsync(myTask tarea);
-        Task UpdateAsync(myTask tarea);
-        Task DeleteAsync(int id);
-        Task<bool> ExistsAsync(int id);
+        Task<IEnumerable<Entities.Task>> GetAll();
+        Task<IEnumerable<Entities.Task>> GetByStatus(string status);
+        Task<Entities.Task?> GetById(int taskId);
+        Task Add(Entities.Task task);
+        Task Update(Entities.Task task);
+        Task Delete(int taskId);
+        Task<bool> Exists(int taskId);
     }
 }
