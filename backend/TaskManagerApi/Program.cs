@@ -1,11 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using TaskManagerApi.Data;
+using TaskManagerApi.Interfaces;
+using TaskManagerApi.Repositories;
+using TaskManagerApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionsString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApiDbContext>(options =>  options.UseSqlServer(connectionsString));
+builder.Services.AddScoped<ITaskRepository, TaskRespository>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 // Add services to the container.
 
