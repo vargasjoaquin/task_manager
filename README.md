@@ -105,7 +105,7 @@ Este proyecto es una solución integral para un Gestor de Tareas diario, diseña
 
   ----
 
-  9. **Flujo de control de versiones (GitFlow)**
+  8. **Flujo de control de versiones (GitFlow)**
 
      Para este proyecto se implementó una metodología de Git Flow simplificada, simulando un entorno de desarrollo profesional para garantizar la trazabilidad y el orden del código:
 
@@ -121,7 +121,7 @@ Este proyecto es una solución integral para un Gestor de Tareas diario, diseña
 
   ----
 
-  8. **Uso de la IA**
+  9. **Uso de la IA**
 
      Se declara el uso de herramientas de IA (ChatGPT/Google IA Studio) como apoyo durante el desarrollo para:
 
