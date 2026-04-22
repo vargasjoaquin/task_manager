@@ -14,6 +14,10 @@ namespace TaskManagerApi.Repositories
             _apiContext = context;
         }
 
+        /// <summary>
+        /// Obtiene todas las tareas incluyendo su estado y usuario asociado.
+        /// </summary>
+        /// <returns>Lista de tareas.</returns>
         public async Task<IEnumerable<myTaskEntity>> GetAll()
         {
             return await _apiContext.Tareas
@@ -22,8 +26,13 @@ namespace TaskManagerApi.Repositories
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Obtiene tareas filtradas por estado.
+        /// </summary>
+        /// <param name="status">Nombre del estado de la tarea.</param>
+        /// <returns>Lista de tareas que coinciden con el estado indicado.</returns>
 
-        public async Task<IEnumerable<TaskManagerApi.Entities.Task>> GetByStatus(string status)
+        public async Task<IEnumerable<myTaskEntity>> GetByStatus(string status)
         {
             return await _apiContext.Tareas
                 .Include(t => t.Estado)
@@ -32,6 +41,11 @@ namespace TaskManagerApi.Repositories
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Obtiene una tarea por su id.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea.</param>
+        /// <returns>La tarea encontrada.</returns>
         public async Task<myTaskEntity?> GetById(int taskId)
         {
             return await _apiContext.Tareas
@@ -40,22 +54,40 @@ namespace TaskManagerApi.Repositories
                 .FirstOrDefaultAsync(t => t.Id == taskId);
         }
 
+        /// <summary>
+        /// Crea una nueva tarea a la base de datos.
+        /// </summary>
+        /// <param name="task">Entidad de tarea a crear.</param>
         public async Task Add(myTaskEntity task)
         {
             await _apiContext.Tareas.AddAsync(task);
             await _apiContext.SaveChangesAsync();
         }
+
+        /// <summary>
+        /// Actualiza una tarea existente.
+        /// </summary>
+        /// <param name="task">Entidad de tarea con los datos actualizados.</param>
         public async Task Update(myTaskEntity task)
         {
             _apiContext.Tareas.Update(task);
             await _apiContext.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Verifica si existe una tarea con el id especificado.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea.</param>
+        /// <returns>True si existe, false en caso contrario.</returns>
         public async Task<bool> Exists(int taskId)
         {
             return await _apiContext.Tareas.AnyAsync(t => t.Id == taskId);
         }
 
+        /// <summary>
+        /// Elimina una tarea por su identificador.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea a eliminar.</param>
         public async Task Delete(int taskId)
         {
             var task = await GetById(taskId);

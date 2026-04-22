@@ -14,6 +14,10 @@ namespace TaskManagerApi.Services
             _taskRepository = taskRepository;
         }
 
+        /// <summary>
+        /// Obtiene todas las tareas.
+        /// </summary>
+        /// <returns>Lista de tareas como DTO.</returns>
         public async Task<IEnumerable<TaskResponseDto>> GetAllTasks()
         {
             var tasks = await _taskRepository.GetAll();
@@ -29,7 +33,12 @@ namespace TaskManagerApi.Services
             });
         }
 
-        public async System.Threading.Tasks.Task<IEnumerable<TaskResponseDto>> GetTasksByStatus(string status)
+        /// <summary>
+        /// Obtiene tareas filtradas por estado.
+        /// </summary>
+        /// <param name="status">Estado de la tarea.</param>
+        /// <returns>Lista de tareas como DTO.</returns>
+        public async Task<IEnumerable<TaskResponseDto>> GetTasksByStatus(string status)
         {
             var tasks = await _taskRepository.GetByStatus(status);
 
@@ -44,6 +53,11 @@ namespace TaskManagerApi.Services
             });
         }
 
+        /// <summary>
+        /// Obtiene una tarea por su id.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea.</param>
+        /// <returns>La tarea como DTO o null si no existe.</returns>
         public async Task<TaskResponseDto?> GetTaskById(int taskId)
         {
             var task = await _taskRepository.GetById(taskId);
@@ -62,6 +76,11 @@ namespace TaskManagerApi.Services
             };
         }
 
+        /// <summary>
+        /// Crea una nueva tarea.
+        /// </summary>
+        /// <param name="taskDto">Datos de la tarea.</param>
+        /// <returns>La tarea creada como DTO.</returns>
         public async Task<TaskResponseDto> CreateTask(TaskRequestDto taskDto)
         {
             var newTask = new myTaskEntity
@@ -86,6 +105,12 @@ namespace TaskManagerApi.Services
             };
         }
 
+        /// <summary>
+        /// Actualiza una tarea existente.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea.</param>
+        /// <param name="taskDto">Datos actualizados.</param>
+        /// <returns>True si la actualización fue exitosa, false si no existe.</returns>
         public async Task<bool> UpdateTask(int taskId, TaskRequestDto taskDto)
         {
             var existingTask = await _taskRepository.GetById(taskId);
@@ -102,6 +127,11 @@ namespace TaskManagerApi.Services
             return true;
         }
 
+        /// <summary>
+        /// Elimina una tarea por su id.
+        /// </summary>
+        /// <param name="taskId">ID de la tarea.</param>
+        /// <returns>True si la eliminación fue exitosa, false si la tarea no existe.</returns>
         public async Task<bool> DeleteTask(int taskId)
         {
             if (!await _taskRepository.Exists(taskId))
