@@ -32,8 +32,8 @@ namespace TaskManagerApi.Controllers
             }
         }
 
-        // Endpoint: GET /api/tasks/{id}
-        [HttpGet("{id}")]
+        // Endpoint: GET /api/tasks/{taskId}
+        [HttpGet("{taskId}")]
         public async Task<ActionResult<TaskResponseDto>> GetTaskById(int taskId)
         {
             var task = await _taskService.GetTaskById(taskId);
@@ -55,8 +55,8 @@ namespace TaskManagerApi.Controllers
             return CreatedAtAction(nameof(GetTaskById), new { id = result.Id }, result);
         }
 
-        // Endpoint: PUT /api/tasks/{id}
-        [HttpPut("{id}")]
+        // Endpoint: PUT /api/tasks/{taskId}
+        [HttpPut("{taskId}")]
         public async Task<IActionResult> Update(int taskId, [FromBody] TaskRequestDto taskDto)
         {
             if (taskDto == null)
@@ -70,8 +70,8 @@ namespace TaskManagerApi.Controllers
             return NoContent();
         }
 
-        // Endpoint: DELETE /api/tasks/{id}
-        [HttpDelete("{id}")]
+        // Endpoint: DELETE /api/tasks/{taskId}
+        [HttpDelete("{taskId}")]
         public async Task<IActionResult> Delete(int taskId)
         {
             var deleted = await _taskService.DeleteTask(taskId);
