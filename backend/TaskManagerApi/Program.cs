@@ -12,6 +12,16 @@ builder.Services.AddDbContext<ApiDbContext>(options =>  options.UseSqlServer(con
 builder.Services.AddScoped<ITaskRepository, TaskRespository>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 
+builder.Services.AddCors( options => 
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -27,6 +37,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 
