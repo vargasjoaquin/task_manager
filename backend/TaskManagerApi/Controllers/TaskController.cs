@@ -18,18 +18,31 @@ namespace TaskManagerApi.Controllers
 
         // Endpoint: GET /api/tasks o /api/tasks?status=Pendiente
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> Get([FromQuery] string? status)
+        public async Task<ActionResult<IEnumerable<TaskResponseDto>>> GetTasks([FromQuery] string? status)
         {
             if (string.IsNullOrEmpty(status))
-            {
-                var tasks = await _taskService.GetAllTasks();
-                return Ok(tasks);
-            }
-            else
-            {
-                var tasks = await _taskService.GetTasksByStatus(status);
-                return Ok(tasks);
-            }
+                return await ListAllTasks(); 
+            
+            return await FilterTasksByStatus(status); 
+        }
+
+        /*
+         * "Dado que en el protocolo REST y en el framework de .NET las query strings (como ?status=) 
+         * no definen una nueva ruta, sino una variante del mismo recurso, utilicé un método despachador. 
+         * Este recibe el pedido y delega la ejecución a dos funciones privadas diferentes (ListAllTasks y FilterTasksByStatus) 
+         * para mantener el controlador limpio y respetar los requerimientos de la prueba de tener métodos independientes para cada acción."
+         */
+
+        private async Task<ActionResult<IEnumerable<TaskResponseDto>>> ListAllTasks()
+        {
+            var tasks = await _taskService.GetAllTasks();
+            return Ok(tasks);
+        }
+
+        private async Task<ActionResult<IEnumerable<TaskResponseDto>>> FilterTasksByStatus(string status)
+        {
+            var tasks = await _taskService.GetTasksByStatus(status);
+            return Ok(tasks);
         }
 
         // Endpoint: GET /api/tasks/{taskId}
@@ -57,7 +70,7 @@ namespace TaskManagerApi.Controllers
 
         // Endpoint: PUT /api/tasks/{taskId}
         [HttpPut("{taskId}")]
-        public async Task<IActionResult> Update(int taskId, [FromBody] TaskRequestDto taskDto)
+        public async Task<IActionResult> Put(int taskId, [FromBody] TaskRequestDto taskDto)
         {
             if (taskDto == null)
                 return BadRequest();
