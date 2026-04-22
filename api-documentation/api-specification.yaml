@@ -1,0 +1,142 @@
+openapi: 3.0.3
+info:
+  title: Task Manager API
+  description: >
+    Documentación técnica de la API para el Gestor de Tareas. 
+    Desarrollado como prueba técnica para el puesto de Desarrollador Junior Fullstack.
+  version: 1.0.0
+  contact:
+    name: Vargas Joaquin Leon
+    email: vargasjoaquin9978@gmail.com
+
+servers:
+  - url: https://localhost:7273
+    description: Servidor de desarrollo local
+
+paths:
+  /api/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: Listar tareas o filtrar por estado
+      description: Devuelve una lista de tareas. Si se provee el parámetro 'status', filtra los resultados.
+      parameters:
+        - name: status
+          in: query
+          description: Nombre del estado (Pendiente, En progreso, Completada)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de tareas recuperada exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskResponseDto'
+    
+    post:
+      tags:
+        - Tasks
+      summary: Crear una nueva tarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequestDto'
+      responses:
+        '201':
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponseDto'
+        '400':
+          description: Error en la validación de los datos
+
+  /api/tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: ID único de la tarea
+        schema:
+          type: integer
+    
+    get:
+      tags:
+        - Tasks
+      summary: Obtener tarea por ID
+      responses:
+        '200':
+          description: Detalle de la tarea encontrado
+        '404':
+          description: Tarea no encontrada
+
+    put:
+      tags:
+        - Tasks
+      summary: Actualizar una tarea existente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskRequestDto'
+      responses:
+        '204':
+          description: Tarea actualizada correctamente
+        '404':
+          description: No existe la tarea con ese ID
+
+    delete:
+      tags:
+        - Tasks
+      summary: Eliminar una tarea
+      responses:
+        '204':
+          description: Tarea eliminada
+        '404':
+          description: No se pudo eliminar (ID no existe)
+
+components:
+  schemas:
+    TaskResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        titulo:
+          type: string
+        descripcion:
+          type: string
+        estadoNombre:
+          type: string
+        usuarioNombre:
+          type: string
+        fechaCreacion:
+          type: string
+          format: date-time
+          
+    TaskRequestDto:
+      type: object
+      required:
+        - titulo
+        - idEstado
+        - idUsuario
+      properties:
+        titulo:
+          type: string
+          example: "Lavar el coche"
+        descripcion:
+          type: string
+          example: "Usar shampoo para autos y secar con microfibra"
+        idEstado:
+          type: integer
+          example: 1
+        idUsuario:
+          type: integer
+          example: 1
