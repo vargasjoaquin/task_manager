@@ -105,6 +105,22 @@ Este proyecto es una solución integral para un Gestor de Tareas diario, diseña
 
   ----
 
+  9. **Flujo de control de versiones (GitFlow)**
+
+     Para este proyecto se implementó una metodología de Git Flow simplificada, simulando un entorno de desarrollo profesional para garantizar la trazabilidad y el orden del código:
+
+     main: Contiene el código estable y listo para la entrega final.
+     
+     feature/database: Desarrollo y versionado de los scripts SQL iniciales y normalización.
+     
+     feature/backend: Implementación de la arquitectura por capas, lógica de negocio y API REST.
+     
+     feature/frontend: Construcción de la interfaz de usuario en React, hooks y estilos.
+     
+     release-candidate/v1.0.0: Rama de integración donde se unificaron las funcionalidades para pruebas finales y documentación.
+
+  ----
+
   8. **Uso de la IA**
 
      Se declara el uso de herramientas de IA (ChatGPT/Google IA Studio) como apoyo durante el desarrollo para:
